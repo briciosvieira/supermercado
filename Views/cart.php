@@ -13,9 +13,16 @@ require_once "../Models/PedidoItem_Service.php";
 require_once "../Controllers/PedidosItemController.php";
 
 $idCliente=$_SESSION['idCliente'];
-$pedido = PedidoController::createIfNotExists($idCliente);
-$idPedido = $pedido->getId();
-$_SESSION['idPedido'] = $idPedido;
+$pedido = PedidoController::createIfNotExists($idCliente); //vai retornar null caso não ache o ID
+if($pedido != null){
+/*
+isso só foi um exemplo mas vc vai entender. E os erros vão seguir em cadeia. 
+Caso não exista, crie uma tela para mostrar o carrinho vazio
+ou não permita clicar no carrinho (o que é bem feio)
+*/
+  $idPedido = $pedido->getId();
+  $_SESSION['idPedido'] = $idPedido;
+}
 
 
 $pedidoItems = PedidosItemController::listPedidoItems($pedido);

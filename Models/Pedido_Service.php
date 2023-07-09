@@ -150,21 +150,23 @@ class PedidoService
     try {
       $conexao =Conexao::conectar();
       $sql = "SELECT * FROM pedidos WHERE userId = :id ORDER BY dataDaCompra DESC LIMIT 1";
-      $stmt = $conexao -> prepare($sql);
-      $stmt -> bindParam(":id", $idCliente);
+      $stmt = $conexao->prepare($sql);
+      $stmt->bindParam(":id", $idCliente);
 
-      $stmt -> execute();
-
-      $data = $stmt->fetch();
-
-      $pedido = new PedidoModel($data["userId"], $data["status"]);
-      $pedido -> setIdPedido($data["idPedido"]);
-      $pedido -> setDataDaCompra($data["dataDaCompra"]);
-      $pedido -> setPedidoAvaliado($data["pedidoAvaliado"]);
+      $stmt->execute();
       
-      return $pedido;
+      $data = $stmt->fetch();
+      // TA SENDO BUSCADO PELO ID DO USUÁRIO LOGADO. Caso não ache o resultado, retorna falso e daí quebra tudo
+      if($data){
+        $pedido = new PedidoModel($data["userId"], $data["status"]);
+        $pedido -> setIdPedido($data["idPedido"]);
+        $pedido -> setDataDaCompra($data["dataDaCompra"]);
+        $pedido -> setPedidoAvaliado($data["pedidoAvaliado"]);
+        return $pedido;
+      }
+      
     } catch (PDOException $e) {
-      return null;
+      return $e->getMessage();
     }
   }
 
